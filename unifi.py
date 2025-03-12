@@ -35,9 +35,9 @@ with open(CONFIG_PATH, 'r') as file_config:
     config = yaml.safe_load(file_config)
 
 # Product URLs - update these in your config.yaml
-URL_SWITCH = config['URL_SWITCH']
-URL_WIFI = config['URL_WIFI']
-URL_GATEWAY = config['URL_GATEWAY']  # Added gateway URL from config
+# URL_SWITCH = config['URL_SWITCH']  # Commented out as switch was already purchased
+# URL_WIFI = config['URL_WIFI']      # Commented out as WiFi AP no longer being tracked
+URL_GATEWAY = config['URL_GATEWAY']  # Only tracking the Cloud Gateway Fiber now
 DRIVER_PATH = config['DRIVER_PATH']  # Adjust if your path is different
 
 # Configure Chrome options
@@ -158,15 +158,10 @@ def main():
         driver = webdriver.Chrome(service=service, options=chrome_options)
         
         try:
-            # Check availability of products
-            switch_available, switch_error = check_product_availability(
-                driver, URL_SWITCH, "Pro Max 16 PoE Switch"
-            )
+            # Switch check removed as it was already purchased
+            # WiFi AP check removed as it's no longer being tracked
             
-            wifi_available, wifi_error = check_product_availability(
-                driver, URL_WIFI, "U7 Pro Max WiFi AP"
-            )
-            
+            # Check availability of Cloud Gateway Fiber only
             gateway_available, gateway_error = check_product_availability(
                 driver, URL_GATEWAY, "Cloud Gateway Fiber"
             )
@@ -174,25 +169,8 @@ def main():
             # Create and send notifications
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             
-            # Switch notification
-            if switch_error:
-                switch_message = f"Error checking Pro Max 16 PoE Switch: {switch_error}"
-                send_notification(switch_message, priority=-1, title="Error - Unifi Stock Check")
-            else:
-                switch_status = "IN STOCK! 🎉" if switch_available else "still sold out 😢"
-                switch_message = f"Pro Max 16 PoE Switch is {switch_status} as of {now}"
-                priority = 1 if switch_available else -2
-                send_notification(switch_message, priority=priority, title="Unifi Stock Check")
-                
-            # WiFi AP notification
-            if wifi_error:
-                wifi_message = f"Error checking U7 Pro Max WiFi AP: {wifi_error}"
-                send_notification(wifi_message, priority=-1, title="Error - Unifi Stock Check")
-            else:
-                wifi_status = "IN STOCK! 🎉" if wifi_available else "still sold out 😢"
-                wifi_message = f"U7 Pro Max WiFi AP is {wifi_status} as of {now}"
-                priority = 1 if wifi_available else -2
-                send_notification(wifi_message, priority=priority, title="Unifi Stock Check")
+            # Switch notification removed as it was already purchased
+            # WiFi AP notification removed as it's no longer being tracked
             
             # Gateway notification
             if gateway_error:
