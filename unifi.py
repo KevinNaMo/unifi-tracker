@@ -34,11 +34,9 @@ CONFIG_PATH = os.path.join(BASE_DIR, 'config.yaml')
 with open(CONFIG_PATH, 'r') as file_config:
     config = yaml.safe_load(file_config)
 
-# Product URLs - update these in your config.yaml
-# URL_SWITCH = config['URL_SWITCH']  # Commented out as switch was already purchased
-# URL_WIFI = config['URL_WIFI']      # Commented out as WiFi AP no longer being tracked
-URL_GATEWAY = config['URL_GATEWAY']  # Only tracking the Cloud Gateway Fiber now
-DRIVER_PATH = config['DRIVER_PATH']  # Adjust if your path is different
+# Product URL - only keeping the gateway
+URL_GATEWAY = config['URL_GATEWAY']  # Cloud Gateway Fiber URL
+DRIVER_PATH = config['DRIVER_PATH']
 
 # Configure Chrome options
 chrome_options = webdriver.ChromeOptions()
@@ -158,19 +156,13 @@ def main():
         driver = webdriver.Chrome(service=service, options=chrome_options)
         
         try:
-            # Switch check removed as it was already purchased
-            # WiFi AP check removed as it's no longer being tracked
-            
-            # Check availability of Cloud Gateway Fiber only
+            # Check availability of only the gateway product
             gateway_available, gateway_error = check_product_availability(
                 driver, URL_GATEWAY, "Cloud Gateway Fiber"
             )
             
-            # Create and send notifications
+            # Create and send notification
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            
-            # Switch notification removed as it was already purchased
-            # WiFi AP notification removed as it's no longer being tracked
             
             # Gateway notification
             if gateway_error:
