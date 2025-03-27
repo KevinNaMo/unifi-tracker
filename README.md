@@ -1,10 +1,10 @@
-Unifi Stock Checker
+# Unifi Stock Checker
 
 A Python-based automation script that monitors the stock status of the Cloud Gateway Fiber product. The script uses Selenium to navigate to the product page, checks for “Sold Out” indicators, and sends notifications via Pushover if the product is available. Additionally, it logs the status to a file and takes a screenshot when the product might be in stock.
 
 Note: This script is designed to run inside a Docker container and interacts via Bluetooth with an ESP32 board that controls LED indicators (based on the .log file), providing a physical alert system in addition to digital notifications.
 
-Features
+## Features
 	•	Automated Stock Checking: Uses Selenium WebDriver to load the product page and search for “Sold Out” indicators.
 	•	Notification System: Integrates with Pushover to send alerts when the product is available or if any errors occur.
 	•	Status Logging: Writes the availability status to a log file specified by an environment variable (that will be used to update the ESP32 leds).
@@ -13,7 +13,7 @@ Features
 	•	Docker-Ready: Preconfigured for deployment within a Docker container.
 	•	Bluetooth Interaction: Communicates via Bluetooth with an ESP32 board to control LED indicators for real-time physical alerts.
 
-Prerequisites
+## Prerequisites
 
 Before running the script, ensure you have:
 	•	Python 3.6 or later
@@ -23,7 +23,7 @@ Before running the script, ensure you have:
 	•	Docker installed (if deploying in a container, optional)
 	•	An ESP32 board with Bluetooth capability and connected LEDs for physical notifications (optional)
 
-Installation
+## Installation
 	1.	Clone the Repository:
 
 git clone https://github.com/yourusername/unifi-stock-checker.git
@@ -50,7 +50,7 @@ python-dotenv
 
 
 
-Configuration
+## Configuration
 
 Environment Variables
 
@@ -64,7 +64,7 @@ YAML Configuration
 
 Create a config.yaml file in the project root with the following structure:
 
-# config.yaml
+### config.yaml
 URL_GATEWAY: "https://example.com/path-to-cloud-gateway-fiber"  # Replace with the actual URL
 DRIVER_PATH: "/path/to/chromedriver"  # Absolute path to your Chrome WebDriver executable
 PUSHOVER_API_TOKEN: "your_pushover_app_token"
@@ -91,11 +91,11 @@ The script will:
 
 
 
-Logging and Screenshots
+## Logging and Screenshots
 	•	Logging: All actions, including errors and status messages, are logged to both the console and a stock_check.log file in the project directory.
 	•	Screenshots: If the product might be in stock (i.e., “Sold Out” is not detected), the script saves a screenshot in the project directory for further verification.
 
-Troubleshooting
+## Troubleshooting
 	•	ChromeDriver Issues: Ensure the version of ChromeDriver matches your installed version of Google Chrome.
 	•	Notification Errors: Double-check your Pushover API and User tokens in the config.yaml.
 	•	Environment Variables: Verify that the .env file is properly configured and located in the project root.
