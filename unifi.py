@@ -15,9 +15,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 import yaml
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Define base directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Get status log path from environment variable
+STATUS_LOG_PATH = os.getenv('STATUS_LOG_PATH')
+if not STATUS_LOG_PATH:
+    logging.warning("STATUS_LOG_PATH environment variable not set. Status will not be logged to file.")
 
 # Configure logging
 logging.basicConfig(
@@ -44,6 +53,27 @@ chrome_options.add_argument("--headless")
 chrome_options.add_argument("--window-size=1920x1080")
 chrome_options.add_argument("--no-sandbox")
 chrome_options.add_argument("--disable-dev-shm-usage")
+
+def log_status_to_file(is_available):
+    """
+    Log the product availability status to the file specified by STATUS_LOG_PATH
+    """
+    if not STATUS_LOG_PATH:
+        return
+
+    try:
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        status = "TRUE" if is_available else "FALSE"
+        
+        # Ensure directory exists
+        os.makedirs(os.path.dirname(STATUS_LOG_PATH), exist_ok=True)
+        
+        with open(STATUS_LOG_PATH, 'a') as log_file:
+            log_file.write(f"[{timestamp}] STATE: {status}\n")
+            
+        logging.info(f"Status logged to {STATUS_LOG_PATH}: {status}")
+    except Exception as e:
+        logging.error(f"Failed to write to status log: {str(e)}")
 
 def send_notification(message, priority=-1, title="Unifi Stock Check"):
     """Send notification via Pushover."""
@@ -161,6 +191,9 @@ def main():
                 driver, URL_GATEWAY, "Cloud Gateway Fiber"
             )
             
+            # Log status to file
+            log_status_to_file(gateway_available and not gateway_error)
+            
             # Create and send notification
             now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             
@@ -183,6 +216,9 @@ def main():
         logging.error(error_message)
         logging.error(traceback.format_exc())
         send_notification(error_message, priority=-1, title="Fatal Error - Unifi Stock Check")
+        
+        # In case of fatal error, log FALSE status
+        log_status_to_file(False)
 
 if __name__ == "__main__":
     main()
